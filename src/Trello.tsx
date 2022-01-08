@@ -35,17 +35,19 @@ function Trello() {
     if (destination?.droppableId === source.droppableId) {
       setTodo((allBoard) => {
         const copyBoard = [...allBoard[source.droppableId]];
+        const taskObj = copyBoard[source.index];
         copyBoard.splice(source.index, 1);
-        copyBoard.splice(destination.index, 0, draggableId);
+        copyBoard.splice(destination.index, 0, taskObj);
         return { ...allBoard, [source.droppableId]: copyBoard };
       });
     }
     if (destination?.droppableId !== source.droppableId) {
       setTodo((allboard) => {
         const sourceBoard = [...allboard[source.droppableId]];
+        const taskObj = sourceBoard[source.index];
         const targetBoard = [...allboard[destination.droppableId]];
         sourceBoard.splice(source.index, 1);
-        targetBoard.splice(destination.index, 0, draggableId);
+        targetBoard.splice(destination.index, 0, taskObj);
         return {
           ...allboard,
           [source.droppableId]: sourceBoard,

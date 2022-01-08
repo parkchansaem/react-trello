@@ -13,14 +13,14 @@ const Card = styled.div<{ isDragging: boolean }>`
 `;
 
 interface Itodo {
-  todo: string;
+  todoId: number;
+  todoText: string;
   index: number;
 }
 
-function DraggbleCard({ todo, index }: Itodo) {
-  console.log(todo);
+function DraggbleCard({ todoId, todoText, index }: Itodo) {
   return (
-    <Draggable key={todo} draggableId={todo} index={index}>
+    <Draggable key={todoId} draggableId={todoId + ""} index={index}>
       {(magic, snapshot) => (
         <Card
           isDragging={snapshot.isDragging}
@@ -28,7 +28,7 @@ function DraggbleCard({ todo, index }: Itodo) {
           {...magic.dragHandleProps}
           {...magic.draggableProps}
         >
-          {todo}
+          {todoText}
         </Card>
       )}
     </Draggable>
