@@ -7,11 +7,12 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "./atom";
+import Board from "./Board";
 
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  max-width: 480px;
+  max-width: 680px;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
@@ -21,59 +22,54 @@ const Wrapper = styled.div`
 const Boards = styled.div`
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(1, 1fr);
-`;
-const Board = styled.div`
-  padding: 20px 10px;
-  padding-top: 30px;
-  border-radius: 5px;
-  background-color: ${(props) => props.theme.boardColor};
-  min-height: 200px;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
 `;
 
-const Card = styled.div`
-  border-radius: 5px;
-  padding: 10px 10px;
-  background-color: ${(props) => props.theme.cardColor};
-  margin-bottom: 5px;
-`;
 function Trello() {
   const [todo, setTodo] = useRecoilState(toDoState);
-  const onDrgEnd = ({ destination, draggableId, source }: DropResult) => {
+  const onDrgEnd = (info: DropResult) => {
+    console.log(info);
+    const { destination, source, draggableId } = info;
     if (!destination) return;
+    if (destination?.droppableId === source.droppableId) {
+      setTodo((allBoard) => {
+        const copyBoard = [...allBoard[source.droppableId]];
+        copyBoard.splice(source.index, 1);
+        copyBoard.splice(destination.index, 0, draggableId);
+        return { ...allBoard, [source.droppableId]: copyBoard };
+      });
+    }
+    if (destination?.droppableId !== source.droppableId) {
+      setTodo((allboard) => {
+        const sourceBoard = [...allboard[source.droppableId]];
+        const targetBoard = [...allboard[destination.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        targetBoard.splice(destination.index, 0, draggableId);
+        return {
+          ...allboard,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: targetBoard,
+        };
+      });
+    }
+    /*  if (!destination) return;
     setTodo((oldToDos) => {
       const copyTodo = [...oldToDos];
 
       copyTodo.splice(source.index, 1);
       copyTodo.splice(destination.index, 0, draggableId);
-
       return copyTodo;
-    });
+    }); */
   };
+  console.log(Object.keys(todo).map((boardId) => todo[boardId]));
   return (
     <DragDropContext onDragEnd={onDrgEnd}>
       <Wrapper>
         <Boards>
-          <Droppable droppableId="one">
-            {(magic) => (
-              <Board ref={magic.innerRef} {...magic.droppableProps}>
-                {todo.map((todo, index) => (
-                  <Draggable key={todo} draggableId={todo} index={index}>
-                    {(magic) => (
-                      <Card
-                        ref={magic.innerRef}
-                        {...magic.dragHandleProps}
-                        {...magic.draggableProps}
-                      >
-                        {todo}
-                      </Card>
-                    )}
-                  </Draggable>
-                ))}
-                {magic.placeholder}
-              </Board>
-            )}
-          </Droppable>
+          {Object.keys(todo).map((boardId) => (
+            <Board boardId={boardId} key={boardId} todo={todo[boardId]} />
+          ))}
         </Boards>
       </Wrapper>
     </DragDropContext>
