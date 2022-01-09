@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { ITodo, toDoState } from "../atom";
+import Delete from "./Delete";
 import DraggbleCard from "./DraggbleCard";
 
 const Wrapper = styled.div`
