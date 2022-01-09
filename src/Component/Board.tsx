@@ -2,7 +2,7 @@ import { Droppable } from "react-beautiful-dnd";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { ITodo, toDoState } from "./atom";
+import { ITodo, toDoState } from "../atom";
 import DraggbleCard from "./DraggbleCard";
 
 const Wrapper = styled.div`

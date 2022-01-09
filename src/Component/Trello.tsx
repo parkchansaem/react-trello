@@ -6,8 +6,9 @@ import {
 } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "./atom";
+import { toDoState } from "../atom";
 import Board from "./Board";
+import Delete from "./Delete";
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,8 +31,16 @@ function Trello() {
   const [todo, setTodo] = useRecoilState(toDoState);
   const onDrgEnd = (info: DropResult) => {
     console.log(info);
-    const { destination, source, draggableId } = info;
+    const { destination, source } = info;
     if (!destination) return;
+    if (destination?.droppableId === "Delete") {
+      console.log("1");
+      setTodo((allboard) => {
+        const copyBoard = [...allboard[source.droppableId]];
+        copyBoard.splice(source.index, 1);
+        return { ...allboard, [source.droppableId]: copyBoard };
+      });
+    }
     if (destination?.droppableId === source.droppableId) {
       setTodo((allBoard) => {
         const copyBoard = [...allBoard[source.droppableId]];
@@ -55,10 +64,10 @@ function Trello() {
         };
       });
     }
+
     /*  if (!destination) return;
     setTodo((oldToDos) => {
       const copyTodo = [...oldToDos];
-
       copyTodo.splice(source.index, 1);
       copyTodo.splice(destination.index, 0, draggableId);
       return copyTodo;
@@ -72,6 +81,7 @@ function Trello() {
           {Object.keys(todo).map((boardId) => (
             <Board boardId={boardId} key={boardId} todo={todo[boardId]} />
           ))}
+          <Delete />
         </Boards>
       </Wrapper>
     </DragDropContext>
