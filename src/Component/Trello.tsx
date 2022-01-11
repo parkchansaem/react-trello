@@ -38,7 +38,9 @@ function Trello() {
       setTodo((allboard) => {
         const copyBoard = [...allboard[source.droppableId]];
         copyBoard.splice(source.index, 1);
-        return { ...allboard, [source.droppableId]: copyBoard };
+        const result = { ...allboard, [source.droppableId]: copyBoard };
+        localStorage.setItem("default", JSON.stringify(result));
+        return result;
       });
     }
     if (destination?.droppableId === source.droppableId) {
@@ -47,7 +49,10 @@ function Trello() {
         const taskObj = copyBoard[source.index];
         copyBoard.splice(source.index, 1);
         copyBoard.splice(destination.index, 0, taskObj);
-        return { ...allBoard, [source.droppableId]: copyBoard };
+        const result = { ...allBoard, [source.droppableId]: copyBoard };
+        console.log(result);
+        localStorage.setItem("default", JSON.stringify(result));
+        return result;
       });
     }
     if (destination?.droppableId !== source.droppableId) {
@@ -57,11 +62,13 @@ function Trello() {
         const targetBoard = [...allboard[destination.droppableId]];
         sourceBoard.splice(source.index, 1);
         targetBoard.splice(destination.index, 0, taskObj);
-        return {
+        const result = {
           ...allboard,
           [source.droppableId]: sourceBoard,
           [destination.droppableId]: targetBoard,
         };
+        localStorage.setItem("default", JSON.stringify(result));
+        return result;
       });
     }
 
