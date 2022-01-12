@@ -17,11 +17,11 @@ export const toDoState = atom<ITodoState>({
   key: "todo",
   default: localData,
 });
-if (localData === null) {
+/* if (localData === null) {
   const defaultValue = {
     "To Do": [],
     Doing: [],
     Done: [],
   };
   localStorage.setItem("default", JSON.stringify(defaultValue));
-}
+} */

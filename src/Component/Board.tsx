@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   width: 300px;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 const Title = styled.h2`
   text-align: center;
@@ -39,6 +40,12 @@ const Form = styled.form`
     width: 100%;
   }
 `;
+const DELETE = styled.button`
+  display: flex;
+  position: absolute;
+  right: 5px;
+  border-radius: 5px;
+`;
 
 interface ISnap {
   isDraggingOver: boolean;
@@ -63,14 +70,27 @@ function Board({ todo, boardId }: IBoardProps) {
       text: toDo,
     };
     setTodo((allboard) => {
-      return { ...allboard, [boardId]: [...allboard[boardId], newTodo] };
+      const result = {
+        ...allboard,
+        [boardId]: [...allboard[boardId], newTodo],
+      };
+      localStorage.setItem("default", JSON.stringify(result));
+      return result;
     });
-    console.log(toDo);
     setValue("toDo", "");
+  };
+  const onclick = () => {
+    setTodo((allboard) => {
+      const copyboard = { ...allboard };
+      delete copyboard[boardId];
+      localStorage.setItem("default", JSON.stringify(copyboard));
+      return copyboard;
+    });
   };
   return (
     <Wrapper>
       <Title>{boardId}</Title>
+      <DELETE onClick={onclick}>X</DELETE>
       <Form onSubmit={handleSubmit(onVailed)}>
         <input
           {...register("toDo", { required: true })}

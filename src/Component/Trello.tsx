@@ -8,6 +8,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "../atom";
 import Board from "./Board";
+import CreateBoard from "./CreateBoard";
 import Delete from "./Delete";
 
 const Wrapper = styled.div`
@@ -17,7 +18,14 @@ const Wrapper = styled.div`
   margin: 0 auto;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
+  flex-direction: column;
+`;
+const Header = styled.header`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 50px;
 `;
 
 const Boards = styled.div`
@@ -50,7 +58,6 @@ function Trello() {
         copyBoard.splice(source.index, 1);
         copyBoard.splice(destination.index, 0, taskObj);
         const result = { ...allBoard, [source.droppableId]: copyBoard };
-        console.log(result);
         localStorage.setItem("default", JSON.stringify(result));
         return result;
       });
@@ -80,15 +87,18 @@ function Trello() {
       return copyTodo;
     }); */
   };
-  console.log(Object.keys(todo).map((boardId) => todo[boardId]));
+  /* console.log(Object.keys(todo).map((boardId) => todo[boardId])); */
   return (
     <DragDropContext onDragEnd={onDrgEnd}>
       <Wrapper>
+        <Header>
+          <CreateBoard />
+          <Delete />
+        </Header>
         <Boards>
           {Object.keys(todo).map((boardId) => (
             <Board boardId={boardId} key={boardId} todo={todo[boardId]} />
           ))}
-          <Delete />
         </Boards>
       </Wrapper>
     </DragDropContext>

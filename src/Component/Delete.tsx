@@ -1,32 +1,21 @@
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Tap = styled.div`
   height: 150px;
   width: 200px;
   border-radius: 30px;
-  background-color: ${(props) => props.theme.boardColor};
+  background-color: transparent;
   display: flex;
-  left: 50%;
-`;
-const Text = styled.span`
-  font-size: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 const Area = styled.div<ISnap>`
-  background-color: ${(props) =>
-    props.isDraggingOver
-      ? "#dfe6e9"
-      : props.isDraggingFromThis
-      ? "#b2bec3"
-      : "transparent"};
-  flex-grow: 1;
-  border-radius: 5px;
+  flex-grow: 3;
+  padding: 30px;
+  padding-left: 100px;
+  border-radius: 30px;
   transition: background-color 0.3s ease-in-out;
-  display: flex;
-  justify-content: center;
 `;
 interface ISnap {
   isDraggingOver: boolean;
@@ -44,7 +33,7 @@ function Delete() {
             ref={magic.innerRef}
             {...magic.droppableProps}
           >
-            <Text>Delete</Text>
+            <FontAwesomeIcon icon={faTrash} size={"5x"} color={"white"} />
             {magic.placeholder}
           </Area>
         )}
