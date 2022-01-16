@@ -51,6 +51,16 @@ function Trello() {
         return result;
       });
     }
+    if (info.type === "board") {
+      setTodo((allboard) => {
+        console.log(allboard);
+        const copyboard = [allboard];
+        const taskboard = copyboard[source.index];
+        copyboard.splice(source.index, 1);
+        copyboard.splice(destination.index, 0, taskboard);
+        return { ...allboard, copyboard };
+      });
+    }
     if (destination?.droppableId === source.droppableId) {
       setTodo((allBoard) => {
         const copyBoard = [...allBoard[source.droppableId]];
@@ -95,11 +105,21 @@ function Trello() {
           <CreateBoard />
           <Delete />
         </Header>
-        <Boards>
-          {Object.keys(todo).map((boardId) => (
-            <Board boardId={boardId} key={boardId} todo={todo[boardId]} />
-          ))}
-        </Boards>
+        <Droppable droppableId="droppableBoard" type="board">
+          {(magic) => (
+            <Boards ref={magic.innerRef} {...magic.droppableProps}>
+              {Object.keys(todo).map((boardId, index) => (
+                <Board
+                  boardId={boardId}
+                  key={boardId}
+                  todo={todo[boardId]}
+                  index={index}
+                />
+              ))}
+              {magic.placeholder}
+            </Boards>
+          )}
+        </Droppable>
       </Wrapper>
     </DragDropContext>
   );

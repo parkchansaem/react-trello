@@ -1,4 +1,5 @@
-import { Droppable } from "react-beautiful-dnd";
+import React from "react";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -6,7 +7,7 @@ import { ITodo, toDoState } from "../atom";
 import Delete from "./Delete";
 import DraggbleCard from "./DraggbleCard";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ isDragging: Boolean }>`
   padding-top: 10px;
   border-radius: 5px;
   background-color: ${(props) => props.theme.boardColor};
@@ -55,13 +56,14 @@ interface ISnap {
 interface IBoardProps {
   todo: ITodo[];
   boardId: string;
+  index: number;
 }
 
 interface IForm {
   toDo: string;
 }
 
-function Board({ todo, boardId }: IBoardProps) {
+function Board({ todo, boardId, index }: IBoardProps) {
   const setTodo = useSetRecoilState(toDoState);
   const { register, setValue, handleSubmit } = useForm<IForm>();
   const onVailed = ({ toDo }: IForm) => {
@@ -88,38 +90,47 @@ function Board({ todo, boardId }: IBoardProps) {
     });
   };
   return (
-    <Wrapper>
-      <Title>{boardId}</Title>
-      <DELETE onClick={onclick}>X</DELETE>
-      <Form onSubmit={handleSubmit(onVailed)}>
-        <input
-          {...register("toDo", { required: true })}
-          type="text"
-          placeholder={`add on the ${boardId} `}
-        ></input>
-      </Form>
-      <Droppable droppableId={boardId}>
-        {(magic, snapshot) => (
-          <Area
-            isDraggingOver={snapshot.isDraggingOver}
-            isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
-            ref={magic.innerRef}
-            {...magic.droppableProps}
-          >
-            {todo.map((todo, index) => (
-              <DraggbleCard
-                key={todo.Id}
-                todoId={todo.Id}
-                todoText={todo.text}
-                index={index}
-              />
-            ))}
-            {magic.placeholder}
-          </Area>
-        )}
-      </Droppable>
-    </Wrapper>
+    <Draggable draggableId={boardId} index={index}>
+      {(provided, snapshot) => (
+        <Wrapper
+          isDragging={snapshot.isDragging}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
+          <Title {...provided.dragHandleProps}>{boardId}</Title>
+          <DELETE onClick={onclick}>X</DELETE>
+          <Form onSubmit={handleSubmit(onVailed)}>
+            <input
+              {...register("toDo", { required: true })}
+              type="text"
+              placeholder={`add on the ${boardId} `}
+            ></input>
+          </Form>
+
+          <Droppable droppableId={boardId}>
+            {(magic, snapshot) => (
+              <Area
+                isDraggingOver={snapshot.isDraggingOver}
+                isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+                ref={magic.innerRef}
+                {...magic.droppableProps}
+              >
+                {todo.map((todo, index) => (
+                  <DraggbleCard
+                    key={todo.Id}
+                    todoId={todo.Id}
+                    todoText={todo.text}
+                    index={index}
+                  />
+                ))}
+                {magic.placeholder}
+              </Area>
+            )}
+          </Droppable>
+        </Wrapper>
+      )}
+    </Draggable>
   );
 }
 
-export default Board;
+export default React.memo(Board);
