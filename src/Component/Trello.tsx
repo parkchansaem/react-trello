@@ -39,10 +39,9 @@ function Trello() {
   const [todo, setTodo] = useRecoilState(toDoState);
   const onDrgEnd = (info: DropResult) => {
     console.log(info);
-    const { destination, source } = info;
+    const { destination, source, draggableId } = info;
     if (!destination) return;
     if (destination?.droppableId === "Delete") {
-      console.log("1");
       setTodo((allboard) => {
         const copyBoard = [...allboard[source.droppableId]];
         copyBoard.splice(source.index, 1);
@@ -51,16 +50,31 @@ function Trello() {
         return result;
       });
     }
-    if (info.type === "board") {
+    /*  if (info.type === "board") {
       setTodo((allboard) => {
-        console.log(allboard);
-        const copyboard = [allboard];
-        const taskboard = copyboard[source.index];
-        copyboard.splice(source.index, 1);
-        copyboard.splice(destination.index, 0, taskboard);
-        return { ...allboard, copyboard };
+        const copy = allboard;
+        Object.keys(copy);
+        copy.splice(source.index, 1);
+        copy.splice(destination.index, 0);
+
+        /* copyboard.splice(source.index, 1);
+        copyboard.splice(destination.index, 0, taskboard); */
+    if (type === "board") {
+      if (destination.index === source.index) return;
+      setToDos((allBoards) => {
+        const board = Object.keys(allBoards);
+        board.splice(source.index, 1);
+        board.splice(destination?.index, 0, draggableId);
+
+        const newBoard: IToDoStateProps = {};
+        board.forEach((key) => {
+          newBoard[key] = allBoards[key];
+        });
+        return newBoard;
       });
+      return;
     }
+
     if (destination?.droppableId === source.droppableId) {
       setTodo((allBoard) => {
         const copyBoard = [...allBoard[source.droppableId]];
