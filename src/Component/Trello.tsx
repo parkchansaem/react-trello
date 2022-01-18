@@ -6,7 +6,7 @@ import {
 } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "../atom";
+import { ITodo, ITodoState, toDoState } from "../atom";
 import Board from "./Board";
 import CreateBoard from "./CreateBoard";
 import Delete from "./Delete";
@@ -50,29 +50,20 @@ function Trello() {
         return result;
       });
     }
-    /*  if (info.type === "board") {
-      setTodo((allboard) => {
-        const copy = allboard;
-        Object.keys(copy);
-        copy.splice(source.index, 1);
-        copy.splice(destination.index, 0);
-
-        /* copyboard.splice(source.index, 1);
-        copyboard.splice(destination.index, 0, taskboard); */
-    if (type === "board") {
+    if (info.type === "board") {
       if (destination.index === source.index) return;
-      setToDos((allBoards) => {
-        const board = Object.keys(allBoards);
-        board.splice(source.index, 1);
-        board.splice(destination?.index, 0, draggableId);
-
-        const newBoard: IToDoStateProps = {};
-        board.forEach((key) => {
-          newBoard[key] = allBoards[key];
+      setTodo((allboard) => {
+        const copy = Object.keys(allboard);
+        copy.splice(source.index, 1);
+        copy.splice(destination?.index, 0, draggableId);
+        const newboard: ITodoState = {};
+        copy.forEach((key) => {
+          newboard[key] = allboard[key];
         });
-        return newBoard;
+        console.log(newboard);
+
+        return newboard;
       });
-      return;
     }
 
     if (destination?.droppableId === source.droppableId) {
@@ -119,7 +110,11 @@ function Trello() {
           <CreateBoard />
           <Delete />
         </Header>
-        <Droppable droppableId="droppableBoard" type="board">
+        <Droppable
+          droppableId="droppableBoard"
+          type="board"
+          direction="horizontal"
+        >
           {(magic) => (
             <Boards ref={magic.innerRef} {...magic.droppableProps}>
               {Object.keys(todo).map((boardId, index) => (
